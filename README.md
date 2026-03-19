@@ -79,6 +79,14 @@ You can tune them in `skill.json`:
 
 Soft-fence is only a software sanity check. It does **not** replace controller-side safety configuration in PolyScope (safety planes, speed limits, stop behavior, etc.).
 
+## Inspiration
+
+This project is inspired by:
+
+- [RoboClaw](https://github.com/MINT-SJTU/RoboClaw): embodied workflow and procedure-first design.
+- [Songling robot demo video](https://www.bilibili.com/video/BV1E2wyz2EiJ): practical hardware execution references.
+- [JARVIS AI Skills](https://clawhub.ai/Aly-Joseph/jarvis-skills): OpenClaw-oriented skill packaging ideas.
+
 ## License
 
 MIT (as declared in `skill.json`).
@@ -165,6 +173,14 @@ print(result)
 ## 安全说明
 
 软围栏仅是软件层输入校验，不可替代 PolyScope 控制器侧的安全配置（安全平面、速度限制、停机行为等）。
+
+## 启发来源
+
+本项目受以下公开资料启发：
+
+- [RoboClaw](https://github.com/MINT-SJTU/RoboClaw)：具身任务工作流与流程化设计思路。
+- [松灵机器人演示视频](https://www.bilibili.com/video/BV1E2wyz2EiJ)：真机执行与演示形态参考。
+- [JARVIS AI Skills](https://clawhub.ai/Aly-Joseph/jarvis-skills)：OpenClaw 方向的 skill 打包与描述方式参考。
 
 ## 许可证
 
