@@ -1,0 +1,190 @@
+{
+  "name": "UR5 RTDE Control",
+  "slug": "ur5-rtde-control",
+  "version": "1.0.0",
+  "description": "Direct Universal Robots UR5 control via RTDE (motion + tool IO) for Jarvis/OpenClaw-style skill calls.",
+  "author": "Local Workspace",
+  "license": "MIT",
+  "keywords": ["robotics", "universal-robots", "ur5", "rtde", "motion", "gripper", "tool-io"],
+  "category": "Hardware",
+  "status": "active",
+  "dependencies": [
+    "ur-rtde",
+    "numpy"
+  ],
+  "capabilities": [
+    "ur5-arm-control",
+    "tcp-pose-control",
+    "joint-motion",
+    "tool-digital-io",
+    "safety-stop",
+    "status-feedback",
+    "procedure-based-execution",
+    "recovery-procedure",
+    "pick-and-place-procedure"
+  ],
+  "procedures": [
+    "connect",
+    "calibrate",
+    "recover",
+    "pick_and_place",
+    "reset"
+  ],
+  "preconditions": [
+    "UR controller reachable over network",
+    "Robot in remote-control mode",
+    "RTDE/state port reachable (30004)",
+    "Secondary/script port reachable for control (commonly 30002)"
+  ],
+  "failureModes": [
+    "rtde_connect_failed",
+    "script_channel_unavailable",
+    "motion_command_rejected",
+    "safety_stop_triggered"
+  ],
+  "failureCodeMap": {
+    "connect_ready": "Connection/session is initialized and ready.",
+    "calibrate_ok": "Preflight checks passed.",
+    "calibrate_failed": "Preflight checks failed; inspect status snapshot and runtime connectivity.",
+    "recover_ok": "Recovery sequence completed.",
+    "recover_failed": "Recovery failed; check robot state and reinitialize runtime.",
+    "pick_and_place_ok": "Pick-and-place completed.",
+    "pick_and_place_failed": "Pick-and-place failed; recover before retry.",
+    "ok": "Generic success."
+  },
+  "softFence": {
+    "mm": {
+      "x_min": -2000.0,
+      "x_max": 2000.0,
+      "y_min": -2000.0,
+      "y_max": 2000.0,
+      "z_min": -500.0,
+      "z_max": 2500.0,
+      "speed_max": 3000.0
+    },
+    "m": {
+      "x_min": -2.0,
+      "x_max": 2.0,
+      "y_min": -2.0,
+      "y_max": 2.0,
+      "z_min": -0.5,
+      "z_max": 2.5,
+      "speed_max": 3.0
+    },
+    "rotation": {
+      "angle_abs_max_deg": 360.0
+    }
+  },
+  "requiredFiles": [
+    "ur5_rtde_control.py",
+    "openclaw_ur5_skill.py",
+    "requirements.txt",
+    "SKILL.md"
+  ],
+  "interfaces": {
+    "init_ur5": {
+      "description": "Initialize RTDE connections to a UR controller",
+      "parameters": {
+        "host": "str",
+        "units": "str"
+      },
+      "returns": "UR5Interface"
+    },
+    "moveL_to": {
+      "description": "Move TCP to an absolute pose (x,y,z,rx,ry,rz)",
+      "parameters": {
+        "x": "float",
+        "y": "float",
+        "z": "float",
+        "rx": "float",
+        "ry": "float",
+        "rz": "float",
+        "speed": "float",
+        "accel": "float"
+      },
+      "returns": "bool"
+    },
+    "moveJ": {
+      "description": "Move joints to target configuration (q0..q5)",
+      "parameters": {
+        "q": "list[float]",
+        "speed": "float",
+        "accel": "float"
+      },
+      "returns": "bool"
+    },
+    "set_tool_digital_out": {
+      "description": "Set tool digital output pin (commonly used for gripper open/close)",
+      "parameters": {
+        "pin": "int",
+        "value": "bool"
+      },
+      "returns": "bool"
+    },
+    "stop": {
+      "description": "Stop current motion (speedStop)",
+      "parameters": {
+        "deceleration": "float"
+      },
+      "returns": "bool"
+    },
+    "get_tcp_pose": {
+      "description": "Read current TCP pose (x,y,z,rx,ry,rz)",
+      "returns": "tuple[float,float,float,float,float,float]"
+    },
+    "init_claw": {
+      "description": "OpenClaw-compatible initializer (UR5 backend)",
+      "parameters": {
+        "host": "str",
+        "units": "str",
+        "tool_do_pin": "int",
+        "gripper_mode": "str"
+      },
+      "returns": "OpenClawUR5"
+    },
+    "grab": {
+      "description": "Close gripper mapping (tool digital out) to grab object",
+      "parameters": { "force": "float", "duration": "float" },
+      "returns": "bool"
+    },
+    "release": {
+      "description": "Open gripper mapping (tool digital out) to release object",
+      "parameters": { "speed": "float" },
+      "returns": "bool"
+    },
+    "move_to": {
+      "description": "OpenClaw-style absolute move preserving current orientation",
+      "parameters": { "x": "float", "y": "float", "z": "float", "speed": "float" },
+      "returns": "bool"
+    },
+    "rotate": {
+      "description": "OpenClaw-style incremental rotate (degrees) around base axis",
+      "parameters": { "angle": "float", "axis": "str", "speed": "float" },
+      "returns": "bool"
+    },
+    "connect": {
+      "description": "Procedure entry: mark/confirm runtime connection readiness",
+      "returns": "dict"
+    },
+    "calibrate": {
+      "description": "Procedure entry: run preflight state checks before motion",
+      "returns": "dict"
+    },
+    "recover": {
+      "description": "Procedure entry: stop motion and optionally retreat to safe Z",
+      "parameters": { "safe_z": "float|null", "speed": "float" },
+      "returns": "dict"
+    },
+    "pick_and_place": {
+      "description": "Procedure: approach-pick-lift-transfer-place-retreat",
+      "parameters": {
+        "pick": "tuple[float,float,float]",
+        "place": "tuple[float,float,float]",
+        "approach_offset": "float",
+        "speed": "float"
+      },
+      "returns": "dict"
+    }
+  }
+}
+

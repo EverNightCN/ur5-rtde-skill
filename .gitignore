@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local archives
+*.zip
+
+# Environment / editor artifacts
+.env
+.DS_Store
+Thumbs.db
